@@ -1,0 +1,55 @@
+{% extends 'authentication/layout.html' %}
+
+
+{% block title %}Verification{% endblock %}
+
+
+{% block style %}
+<style>
+    #verification {
+        text-align: center;
+        padding: 30px;
+    }
+</style>
+{% endblock %}
+
+
+{% block body %}
+<div style="text-align: center;">
+    <h3>Verify Email Address</h3>
+    <h4 style="color: green; font-weight: bold;">{{ email }}</h4>
+    <hr>
+</div>
+<div class="container" id="verification">
+    <div class="row">
+        <div class="col-lg-4">
+
+        </div>
+        <div class="col-lg-4">
+            <form action="{{ url_for('authentication.verify_registration') }}" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="form-group">
+                    <label for="code"><span class="requirement">*</span>Verification Code</label>
+                    <input type="text" class="form-control" name="code" placeholder="Enter Verification Code" autofocus>
+                </div>
+                <button type="submit" class="btn btn-primary">Verify</button>
+            </form>
+        </div>
+        <div class="col-lg-4">
+
+        </div>
+    </div>
+    <h6 style="color: red;">*Check your inbox/spam folder for a verification code:</h6>
+    <div class="errorMessage">
+        {% if verification_error %}
+            {{verification_error}}
+        {% else %}
+            <br>
+        {% endif %}
+    </div>
+    <div><a href="{{ url_for('authentication.login') }}">Login</a></div>
+    <div><a href="">Forgot Password</a></div>
+    <div><a href="{{ url_for('authentication.resend_verification_code') }}">Resend Verification Code</a></div>
+    <div><a href="{{ url_for('authentication.login') }}">Cancel</a></div>
+</div>
+{% endblock %}

@@ -1,0 +1,6 @@
+env/
+application/__pycache__/
+flask_session/
+users.py
+test.py
+sanskrit.db

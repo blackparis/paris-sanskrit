@@ -1,0 +1,69 @@
+{% extends 'authentication/layout.html' %}
+
+
+{% block title %}Register{% endblock %}
+
+
+{% block style %}
+<style>
+    #register {
+        text-align: center;
+        padding: 10px;
+    }
+</style>
+{% endblock %}
+
+
+{% block script %}
+<script src="{{ url_for('static', filename='authentication/register.js') }}"></script>
+{% endblock %}
+
+
+{% block body %}
+<div style="text-align: center;"><h3>Register</h3><hr></div>
+<div class="container" id="register">
+    <form action="{{ url_for('authentication.register') }}" method="POST" id="register_form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="form-row">
+            <div class="col-md-6 mb-3">
+                <label for="name"><span class="requirement">*</span>Full Name</label>
+                <input type="text" class="form-control" id="name" name="name" autocomplete="off" placeholder="Full Name" autofocus>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="mobile"><span class="requirement">*</span>Mobile Number</label>
+                <input type="text" class="form-control" id="mobile" name="mobile" autocomplete="off" placeholder="Mobile Number">
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="col-md-6 mb-3">
+                <label for="email"><span class="requirement">*</span>Email</label>
+                <input type="email" class="form-control" id="email" name="email" autocomplete="off" placeholder="Email Address">
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="username"><span class="requirement">*</span>Username</label>
+                <input type="text" class="form-control" id="username" name="username" autocomplete="off" placeholder="Username">
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="col-md-6 mb-3">
+                <label for="password1"><span class="requirement">*</span>Password</label>
+                <input type="password" class="form-control" id="password1" name="password1" autocomplete="off" placeholder="Password">
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="password2"><span class="requirement">*</span>Confirm Password</label>
+                <input type="password" class="form-control" id="password2" name="password2" autocomplete="off" placeholder="Confirm Password">
+            </div>
+        </div>
+        <button class="btn btn-primary" type="submit">Continue</button>
+    </form>
+    <div class="errorMessage">
+        {% if register_error %}
+            {{register_error}}
+        {% else %}
+            <br>
+        {% endif %}
+    </div>
+    <div><a href="{{ url_for('authentication.login') }}">Login</a></div>
+    <div><a href="">Forgot Password</a></div>
+</div>
+{% endblock %}
