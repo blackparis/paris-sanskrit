@@ -8,16 +8,14 @@
 <style>
     #confirmation {
         text-align: center;
-        padding: 50px;
     }
 </style>
 {% endblock %}
 
 
 {% block body %}
-<br><br>
 <div class="container" id="confirmation">
-    <h5>Registration Successful</h5>
+    <h3>Registration Successful</h3>
     <hr>
     <a href="{{ url_for('authentication.login') }}">Login to Continue</a>
 </div>

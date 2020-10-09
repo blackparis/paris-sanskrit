@@ -7,3 +7,16 @@ body {
 .requirement, .errorMessage {
     color: red;
 }
+
+#auth_header {
+    text-align: center;
+}
+
+#header_img {
+    width: 85px;
+}
+
+#site_name {
+    color: green;
+    font-style: italic;
+}

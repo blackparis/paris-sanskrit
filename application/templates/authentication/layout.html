@@ -18,6 +18,20 @@
         {% block script %}{% endblock %}
     </head>
     <body>
+        <div class="container" id="auth_header">
+            <div class="row">
+                <div class="col-lg-1">
+                    <img src="{{ url_for('static', filename='logo.jpg') }}" class="img-thumbnail" id="header_img">
+                </div>
+                <div class="col-lg-10">
+                    <h1 id="site_name">Sanskrit</h1>
+                </div>
+                <div class="col-lg-1">
+
+                </div>
+            </div>
+        </div>
+        <hr>
         {% block body %}{% endblock %}
     </body>
 </html>

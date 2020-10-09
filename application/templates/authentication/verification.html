@@ -15,11 +15,7 @@
 
 
 {% block body %}
-<div style="text-align: center;">
-    <h3>Verify Email Address</h3>
-    <h4 style="color: green; font-weight: bold;">{{ email }}</h4>
-    <hr>
-</div>
+<div style="text-align: center;"><h3>Verify Email Address</h3><hr></div>
 <div class="container" id="verification">
     <div class="row">
         <div class="col-lg-4">
@@ -39,7 +35,8 @@
 
         </div>
     </div>
-    <h6 style="color: red;">*Check your inbox/spam folder for a verification code:</h6>
+    <h6 style="color: red;">*Check your inbox/spam folder for a verification code</h6>
+    <h6>Email Address: <span style="color: green; font-weight: bold;">{{ email }}</span></h6>
     <div class="errorMessage">
         {% if verification_error %}
             {{verification_error}}

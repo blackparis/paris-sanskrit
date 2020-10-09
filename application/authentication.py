@@ -188,8 +188,6 @@ def verify_registration():
         return redirect(url_for('authentication.register'))
 
     if request.method == "GET":
-        #delete
-        print(session["registration"]["code"])
         return render_template(
             "authentication/verification.html",
             email=session["registration"]["email"]
@@ -239,7 +237,7 @@ def verify_registration():
 @bp.route("/confirmation")
 def confirmation():
     if not session.get("registration"):
-        return redirect(url_for('authentication.register'))
+        return redirect(url_for('authentication.login'))
     
     session["registration"].clear()
     session["registration"] = None
