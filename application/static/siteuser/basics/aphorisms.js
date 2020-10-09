@@ -47,3 +47,63 @@ function load() {
 
     request.send(data);
 };
+
+
+function ShowAllTopics() {
+    if (topic === '') {
+        return false;
+    }
+    counter = 0;
+    topic = '';
+    subtopic = '';
+    document.querySelector('#allAphorisms').innerHTML = '';
+    load();
+    document.querySelector("#topic_name").innerHTML = "Topics";
+    document.querySelector('#SubTopicsDropDown').innerHTML = '';
+}
+
+
+
+function SelectTopic(tp, stp) {
+    if (topic === tp) {
+        return false;
+    }
+    counter = 0;
+    topic = tp;
+    subtopic = '';
+    document.querySelector('#allAphorisms').innerHTML = '';
+    load();
+    document.querySelector("#topic_name").innerHTML = tp;
+    createSubTopicDropDown(stp);
+}
+
+
+function createSubTopicDropDown(stp) {
+    const dd_template = Handlebars.compile(document.querySelector('#SubTopicsDropDownHandleBars').innerHTML);
+    const dd = dd_template({'subtopics': stp});
+    document.querySelector('#SubTopicsDropDown').innerHTML = dd;
+}
+
+
+function SelectSubTopic(stp) {
+    if (topic === '' || stp === subtopic) {
+        return false;
+    }
+    counter = 0;
+    subtopic = stp;
+    document.querySelector('#allAphorisms').innerHTML = '';
+    load();
+    document.querySelector("#subtopic_name").innerHTML = stp;
+}
+
+
+function ShowAllSubTopics() {
+    if (subtopic === '' || topic === '') {
+        return false;
+    }
+    counter = 0;
+    subtopic = '';
+    document.querySelector('#allAphorisms').innerHTML = '';
+    load();
+    document.querySelector("#subtopic_name").innerHTML = "SubTopics";
+}

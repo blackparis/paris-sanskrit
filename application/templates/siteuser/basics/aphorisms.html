@@ -9,14 +9,38 @@
     #allAphorisms {
         font-size: large;
     }
+    #dropdowns {
+        position: relative;
+        text-align: left;
+    }
+    .dropdown-menu {
+        max-height: 500px;
+        overflow: auto;
+    }
 </style>
 {% endblock %}
 
 
 {% block body %}
+<div id="dropdowns">
+    <div class="btn-group" id="TopicsDropDown">
+        <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <span id="topic_name">Topics</span>
+        </button>
+        <div class="dropdown-menu dropdown-menu-right dropdown-menu-lg-left">
+            <a class="dropdown-item" href="" onclick="ShowAllTopics(); return false;">All</a>
+            <div class="dropdown-divider"></div>
+            {% for key, value in aphorisms_categories.items() %}
+            <a class="dropdown-item" href="" onclick="SelectTopic('{{key}}', {{value}}); return false;">{{key}}</a>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="btn-group" id="SubTopicsDropDown">
+
+    </div>
+</div>
+<hr>
 <div class="container" style="text-align: center;">
-    <h4>Aphorisms</h4>
-    <hr>
     <div id="allAphorisms"></div>
 </div>
 {% endblock %}
@@ -43,6 +67,20 @@
             </div>
             <hr>
         {{/each}}
+    {%- endraw %}
+</script>
+<script id="SubTopicsDropDownHandleBars" type="text/x-handlebars-template">
+    {% raw -%}
+        <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <span id="subtopic_name">SubTopics</span>
+        </button>
+        <div class="dropdown-menu dropdown-menu-right dropdown-menu-lg-left">
+            <a class="dropdown-item" href="" onclick="ShowAllSubTopics(); return false;">All</a>
+            <div class="dropdown-divider"></div>
+            {{#each subtopics}}
+            <a class="dropdown-item" href="" onclick="SelectSubTopic('{{this}}'); return false;">{{this}}</a>
+            {{/each}}
+        </div>
     {%- endraw %}
 </script>
 {% endblock %}

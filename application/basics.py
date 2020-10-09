@@ -77,10 +77,11 @@ def aphorisms():
 def get_aphorisms_categories():
     categories = {}
 
-    aphorisms = Aphorism.query.all()
+    aphorisms = Aphorism.query.order_by(Aphorism.number).all()
     for a in aphorisms:
         if a.topic not in categories:
-            categories[a.topic] = set()
-        (categories[a.topic]).add(a.subtopic)
+            categories[a.topic] = []
+        if a.subtopic not in categories[a.topic]:
+            (categories[a.topic]).append(a.subtopic)
     
     return categories
