@@ -6,13 +6,43 @@
 
 {% block style %}
 <style>
+    #allAphorisms {
+        font-size: large;
+    }
 </style>
 {% endblock %}
 
 
-{% block script %}
+{% block body %}
+<div class="container" style="text-align: center;">
+    <h4>Aphorisms</h4>
+    <hr>
+    <div id="allAphorisms"></div>
+</div>
 {% endblock %}
 
 
-{% block body %}
+{% block script %}
+<script src="{{ url_for('static', filename='siteuser/basics/aphorisms.js') }}"></script>
+<script id="AphorismsHandleBars" type="text/x-handlebars-template">
+    {% raw -%}
+        {{#each aphorisms}}
+            <div class="row">
+                <div class="col-sm-1">
+                    {{this.number}}
+                </div>
+                <div class="col-sm-1" style="color: green;">
+                    {{this.topic}}
+                </div>
+                <div class="col-sm-1" style="color: hotpink;">
+                    {{this.subtopic}}
+                </div>
+                <div class="col-sm-9">
+                    {{this.rule}}
+                </div>
+            </div>
+            <hr>
+        {{/each}}
+    {%- endraw %}
+</script>
 {% endblock %}
