@@ -17,6 +17,10 @@ def login():
     if session.get("registration"):
         session["registration"].clear()
         session["registration"] = None
+    
+    if session.get("recovery"):
+        session["recovery"].clear()
+        session["recovery"] = None
 
     if request.method == "GET":
         return render_template(
@@ -70,6 +74,11 @@ def register():
         if session.get("registration"):
             session["registration"].clear()
             session["registration"] = None
+        
+        if session.get("recovery"):
+            session["recovery"].clear()
+            session["recovery"] = None
+        
         return render_template(
             "authentication/register.html"
         )
@@ -245,6 +254,168 @@ def confirmation():
     return render_template(
         "authentication/confirmation.html"
     )
+
+
+@bp.route("/recover/password", methods=["POST", "GET"])
+def recover_password():
+    if session.get("administrator"):
+        return redirect(url_for('administrator.homepage'))
+    elif session.get("siteuser"):
+        return redirect(url_for('siteuser.homepage'))
+    
+    if session.get("registration"):
+        session["registration"].clear()
+        session["registration"] = None
+
+    if request.method == "GET":
+        if session.get("recovery"):
+            session["recovery"].clear()
+            session["recovery"] = None
+        return render_template(
+            "authentication/recover_password.html"
+        )
+    
+    credentials = request.form.get("credentials")
+    if not credentials:
+        return render_template(
+            "authentication/recover_password.html",
+            recovery_error="Enter your email address or username."
+        )
+    
+    credentials = credentials.strip()
+    u = User.query.filter_by(email=credentials).first()
+    if not u:
+        u = User.query.filter_by(username=credentials).first()
+        if not u:
+            return render_template(
+                "authentication/recover_password.html",
+                recovery_error="Invalid Credentials."
+            )
+    
+    code = str(random.randint(100000, 999999))
+
+    session["recovery"] = {
+        "email": u.email,
+        "username": u.username,
+        "code": code,
+        "verification": False
+    }
+
+    content = getVerificationEmailContent(code)
+    if sendemail(email, content):
+        return redirect(url_for('authentication.verify_password_change'))
+    else:
+        session["recovery"].clear()
+        session["recovery"] = None
+    
+    return render_template(
+        "authentication/recover_password.html",
+        register_error="Something went wrong. Please try again later."
+    )
+
+
+@bp.route("/recover/password/verify", methods=["POST", "GET"])
+def verify_password_change():
+    if not session.get("recovery"):
+        return redirect(url_for('authentication.recover_password'))
+    
+    email = get_secret_email(session["recovery"]["email"])
+    
+    if request.method == "GET":
+        #to delete
+        print(session["recovery"]["code"])
+        return render_template(
+            "authentication/verify_password_change.html",
+            email=email
+        )
+    
+    code = request.form.get("code")
+    if not code:
+        return render_template(
+            "authentication/verify_password_change.html",
+            email=email,
+            verification_error="Enter the verification code."
+        )
+    
+    if code != session["recovery"]["code"]:
+        return render_template(
+            "authentication/verify_password_change.html",
+            email=email,
+            verification_error="Incorrect verification code."
+        )
+    
+    session["recovery"]["verification"] = True
+    return redirect(url_for('authentication.change_password'))
+
+
+@bp.route("/change/password", methods=["POST", "GET"])
+def change_password():
+    if not session.get("recovery") or not session["recovery"]["verification"]:
+        return redirect(url_for('authentication.recover_password'))
+    
+    if request.method == "GET":
+        return render_template(
+            "authentication/change_password.html"
+        )
+    
+    password1 = request.form.get("password1")
+    password2 = request.form.get("password2")
+
+    if not password1 or not password2:
+        return render_template(
+            "authentication/change_password.html",
+            password_error="Incomplete Form"
+        )
+    
+    if password1 != password2:
+        return render_template(
+            "authentication/change_password.html",
+            password_error="Passwords don't match."
+        )
+    
+    if not validate_password(password1):
+        return render_template(
+            "authentication/change_password.html",
+            password_error="Type a strong alpha-numeric eight character password with special characters."
+        )
+    
+    password = generate_password_hash(password1)
+
+    u = User.query.filter_by(email=session["recovery"]["email"]).first()
+    if not u:
+        session["recovery"].clear()
+        session["recovery"] = None
+        return render_template(
+            "authentication/change_password.html",
+            password_error="Something went wrong. Please try again later."
+        )
+    
+    u.password = password
+    try:
+        db.session.commit()
+    except:
+        session["recovery"].clear()
+        session["recovery"] = None
+        return render_template(
+            "authentication/change_password.html",
+            password_error="Something went wrong. Please try again later."
+        )
+    else:
+        return redirect(url_for('authentication.login'))
+
+
+@bp.route("/recover/password/resendcode")
+def resend_code_pc():
+    if not session.get("recovery"):
+        return redirect(url_for('authentication.recover_password'))
+    
+    code = str(random.randint(100000, 999999))
+    content = getVerificationEmailContent(code)
+    if sendemail(email, content):
+        session["recovery"]["code"] = code
+        return redirect(url_for('authentication.verify_password_change'))
+    else:
+        return redirect(url_for('authentication.recover_password'))
 
 
 @bp.route("/logout")

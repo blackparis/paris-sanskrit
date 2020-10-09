@@ -143,3 +143,14 @@ def validate_mobile(mobile):
                 return False
     
     return True
+
+
+def get_secret_email(email):
+    e = email[0]
+    d = email.split('@')
+    em = d[0]
+    dm = d[1]
+    for _ in range(len(em)-1):
+        e = e + '*'
+    
+    return e + '@' + dm

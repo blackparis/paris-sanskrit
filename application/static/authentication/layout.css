@@ -19,4 +19,5 @@ body {
 #site_name {
     color: green;
     font-style: italic;
+    padding: 10px;
 }
