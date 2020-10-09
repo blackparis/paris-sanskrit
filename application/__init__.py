@@ -7,7 +7,7 @@ from flask_session import Session
 from flask_wtf.csrf import CSRFProtect
 #from application.sockets import socketio
 
-from application import administrator, authentication, siteuser
+from application import administrator, authentication, siteuser, basics
 
 
 def create_app():
@@ -23,6 +23,7 @@ def create_app():
     application.register_blueprint(authentication.bp)
     application.register_blueprint(siteuser.bp)
     application.register_blueprint(administrator.bp)
+    application.register_blueprint(basics.bp)
 
     application.add_url_rule('/', endpoint='homepage')
 

@@ -5,12 +5,21 @@ from datetime import datetime
 import random
 #from application.sockets import *
 
-bp = Blueprint("siteuser", __name__)
+bp = Blueprint("basics", __name__, url_prefix='/basics')
 
 @bp.route("/")
 def homepage():
     username = None if not session.get("siteuser") else session["siteuser"]["username"]
     return render_template(
-        "siteuser/homepage.html",
+        "siteuser/basics/homepage.html",
+        username=username
+    )
+
+
+@bp.route("/aphorisms")
+def aphorisms():
+    username = None if not session.get("siteuser") else session["siteuser"]["username"]
+    return render_template(
+        "siteuser/basics/aphorisms.html",
         username=username
     )
