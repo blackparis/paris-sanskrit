@@ -1,0 +1,17 @@
+body {
+    padding: 20px;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+}
+
+
+.requirement, .errorMessage {
+    color: red;
+}
+
+
+#site_name {
+    font-size: larger;
+    color: green;
+    font-style: italic;
+    font-weight: bold;
+}

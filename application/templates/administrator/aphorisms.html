@@ -1,0 +1,136 @@
+{% extends 'administrator/layout.html' %}
+
+{% block title %}Homepage{% endblock %}
+
+
+{% block style %}
+<style>
+    .number_span, .rule_span {
+        text-align: left;
+    }
+</style>
+{% endblock %}
+
+
+{% block body %}
+<div class="container" style="text-align: center;">
+    <div class="row">
+        <div class="col-lg-3">
+            <h5>Topics</h5>
+            <a href="" id="add_topic_link">Add Topic</a>
+            <div id="add_topic_form" style="display: none;">
+                <form id="add_topic">
+                    <div class="form-group">
+                        <input type="text" class="form-control form-control-sm" id="topic_name" placeholder="Topic Name">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-sm">Add</button>
+                </form>
+                <a href="" id="cancel_add_topic">Cancel</a>
+                <div id="add_topic_error" class="errorMessage"></div>
+            </div>
+            <hr>
+            <div id="topics_list">
+                {% if topics %}
+                    {% for topic in topics %}
+                        <div><a href="" onclick="SelectTopic('{{topic.id}}'); return false;">{{ topic.name }}</a></div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+        <div class="col-lg-3" id="subtopics_div">
+
+        </div>
+        <div class="col-lg-6" id="aphorisms_div">
+
+
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block script %}
+<script src="{{ url_for('static', filename='administrator/aphorisms.js') }}"></script>
+
+<script id="TopicDivHandleBars" type="text/x-handlebars-template">
+    {% raw -%}
+        <div><a href="" onclick="SelectTopic('{{topic_id}}'); return false;">{{topic_name}}</a></div>
+    {%- endraw %}
+</script>
+
+<script id="SubTopicDivHandleBars" type="text/x-handlebars-template">
+    {% raw -%}
+        <h5>{{topic_name}}</h5>
+        <a href="" onclick="add_subtopic_link(); return false;">Add Sub Topic</a>
+        <div id="add_subtopic_form" style="display: none;">
+            <form onsubmit="AddSubTopic('{{topic_id}}'); return false;">
+                <div class="form-group">
+                    <input type="text" class="form-control form-control-sm" id="subtopic_name" placeholder="Sub Topic Name">
+                </div>
+                <button type="submit" class="btn btn-primary btn-sm">Add</button>
+            </form>
+            <a href="" onclick="cancel_add_subtopic(); return false;">Cancel</a>
+            <div id="add_subtopic_error" class="errorMessage"></div>
+        </div>
+        <hr>
+        <div id="subtopics_list">
+            {{#each subtopics}}
+                <div><a href="" onclick="SelectSubTopic('{{this.subtopic_id}}'); return false;">{{this.subtopic_name}}</a></div>
+            {{/each}}
+        </div>
+    {%- endraw %}
+</script>
+
+<script id="SubTopicHandleBars" type="text/x-handlebars-template">
+    {% raw -%}
+        <div><a href="" onclick="SelectSubTopic('{{subtopic_id}}'); return false;">{{subtopic_name}}</a></div>
+    {%- endraw %}
+</script>
+
+<script id="RulesDivHandleBars" type="text/x-handlebars-template">
+    {% raw -%}
+        <h5>{{topic_name}} - {{subtopic_name}}</h5>
+        <a href="" onclick="add_rule_link(); return false;">Add Aphorism</a>
+        <div id="add_rule_form" style="display: none;">
+            <form onsubmit="AddRule('{{subtopic_id}}'); return false;">
+                <div class="form-group" style="padding: 3px;">
+                    <input type="text" class="form-control form-control-sm" id="aphorism_number" placeholder="Aphorism Number">
+                </div>
+                <div class="form-group" style="padding: 3px;">
+                    <textarea class="form-control" id="aphorism" rows="10"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary btn-sm">Add</button>
+            </form>
+            <a href="" onclick="cancel_add_rule(); return false;">Cancel</a>
+            <div id="add_rule_error" class="errorMessage"></div>
+        </div>
+        <hr>
+        <div id="rules_list">
+            {{#each aphorisms}}
+                <div class="row" id="rule_{{this.id}}">
+                    <div class="col-sm-2 number_span">
+                        <span>{{this.number}}</span>
+                    </div>
+                    <div class="col-sm-10 rule_span">
+                        <span>{{this.rule}}</span>
+                    </div>
+                </div>
+            {{/each}}
+        </div>
+    {%- endraw %}
+</script>
+
+<script id="RulesHandleBars" type="text/x-handlebars-template">
+    {% raw -%}
+        <div class="row" id="rule_{{rule_id}}">
+            <div class="col-sm-2 number_span">
+                <span>{{number}}</span>
+            </div>
+            <div class="col-sm-10 rule_span">
+                <span>{{rule}}</span>
+            </div>
+        </div>
+    {%- endraw %}
+</script>
+
+{% endblock %}

@@ -14,13 +14,24 @@ class User(db.Model):
     admin = db.Column(db.Boolean, nullable=False, default=False)
 
 
+class Topic(db.Model):
+    __tablename__ = "topics"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False, unique=True)
+    subtopics = db.relationship("SubTopic", backref='topic', lazy=True)
+
+
+class SubTopic(db.Model):
+    __tablename__ = "subtopics"
+    id = db.Column(db.Integer, primary_key=True)
+    topic_id = db.Column(db.Integer, db.ForeignKey("topics.id"), nullable=False)
+    name = db.Column(db.String(100), nullable=False)
+    rules = db.relationship("Aphorism", backref='subtopic', lazy=True)
+
+
 class Aphorism(db.Model):
     __tablename__ = "aphorisms"
     id = db.Column(db.Integer, primary_key=True)
     number = db.Column(db.Integer, nullable=False, unique=True)
-    topic = db.Column(db.String(100), nullable=False)
-    subtopic = db.Column(db.String(100), nullable=True)
+    subtopic_id = db.Column(db.Integer, db.ForeignKey("subtopics.id"), nullable=False)
     rule = db.Column(db.Text, nullable=False)
-
-    def __repr__(self):
-        return f"{self.number}, {self.topic}, {self.subtopic}, {self.rule}"
