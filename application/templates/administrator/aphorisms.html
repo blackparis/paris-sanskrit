@@ -40,12 +40,13 @@
                                 <a class="content_link" href="" onclick="SelectTopic('{{topic.id}}'); return false;">{{ topic.name }}</a>
                             </div>
                             <div class="col-4 col-sm-4">
-                                <a href="" class="edit_link">Edit</a>
+                                <a href="" class="edit_link" onclick="edit_topic('{{topic.id}}', '{{topic.name}}'); return false;">Edit</a>
                             </div>
                             <div class="col-4 col-sm-4">
                                 <a href="" class="delete_link">Delete</a>
                             </div>
                         </div>
+                        <div class="editing" id="edit_topic_form_{{topic.id}}"></div>
                     {% endfor %}
                 {% endif %}
             </div>
@@ -72,12 +73,13 @@
                 <a class="content_link" href="" onclick="SelectTopic('{{topic_id}}'); return false;">{{topic_name}}</a>
             </div>
             <div class="col-4 col-sm-4">
-                <a href="" class="edit_link">Edit</a>
+                <a href="" class="edit_link" onclick="edit_topic('{{topic_id}}', '{{topic_name}}'); return false;">Edit</a>
             </div>
             <div class="col-4 col-sm-4">
                 <a href="" class="delete_link">Delete</a>
             </div>
         </div>
+        <div class="editing" id="edit_topic_form_{{topic_id}}"></div>
     {%- endraw %}
 </script>
 
@@ -103,12 +105,13 @@
                         <a class="content_link" href="" onclick="SelectSubTopic('{{this.subtopic_id}}'); return false;">{{this.subtopic_name}}</a>
                     </div>
                     <div class="col-4 col-sm-4">
-                        <a href="" class="edit_link">Edit</a>
+                        <a href="" class="edit_link" onclick="edit_subtopic('{{this.subtopic_id}}', '{{this.subtopic_name}}', '{{this.topic_id}}'); return false;">Edit</a>
                     </div>
                     <div class="col-4 col-sm-4">
                         <a href="" class="delete_link">Delete</a>
                     </div>
                 </div>
+                <div class="editing" id="edit_subtopic_form_{{this.subtopic_id}}"></div>
             {{/each}}
         </div>
     {%- endraw %}
@@ -121,12 +124,13 @@
                 <a class="content_link" href="" onclick="SelectSubTopic('{{subtopic_id}}'); return false;">{{subtopic_name}}</a>
             </div>
             <div class="col-4 col-sm-4">
-                <a href="" class="edit_link">Edit</a>
+                <a href="" class="edit_link" onclick="edit_subtopic('{{subtopic_id}}', '{{subtopic_name}}', '{{topic_id}}'); return false;">Edit</a>
             </div>
             <div class="col-4 col-sm-4">
                 <a href="" class="delete_link">Delete</a>
             </div>
         </div>
+        <div class="editing" id="edit_subtopic_form_{{this.subtopic_id}}"></div>
     {%- endraw %}
 </script>
 
@@ -185,6 +189,37 @@
                 <span style="font-size: large;">{{rule}}</span>
             </div>
         </div>
+    {%- endraw %}
+</script>
+
+<script id="EditTopicFormHandleBars" type="text/x-handlebars-template">
+    {% raw -%}
+        <hr>
+        <form onsubmit="EditTopic('{{topic_id}}', '{{topic_name}}'); return false;">
+            <div class="form-group">
+                <input type="text" class="form-control form-control-sm" id="topic_name_{{topic_id}}" value="{{topic_name}}">
+            </div>
+            <button type="submit" class="btn btn-primary btn-sm">Update</button>
+        </form>
+        <a href="" onclick="CloseEditingForms(); return false;">Cancel</a>
+        <div id="edit_topic_error" class="errorMessage"></div>
+        <hr>
+    {%- endraw %}
+</script>
+
+
+<script id="EditSubTopicFormHandleBars" type="text/x-handlebars-template">
+    {% raw -%}
+        <hr>
+        <form onsubmit="EditSubTopic('{{subtopic_id}}', '{{subtopic_name}}', '{{topic_id}}'); return false;">
+            <div class="form-group">
+                <input type="text" class="form-control form-control-sm" id="subtopic_name_{{subtopic_id}}" value="{{subtopic_name}}">
+            </div>
+            <button type="submit" class="btn btn-primary btn-sm">Update</button>
+        </form>
+        <a href="" onclick="CloseEditingForms(); return false;">Cancel</a>
+        <div id="edit_subtopic_error" class="errorMessage"></div>
+        <hr>
     {%- endraw %}
 </script>
 

@@ -80,7 +80,7 @@ def add_subtopic():
         return jsonify({"success": False, "message": "Unknown Error"})
     else:
         st = SubTopic.query.filter_by(name=subtopic_name).filter_by(topic_id=topic_id).first()
-        return jsonify({"success": True, "subtopic_name": st.name, "subtopic_id": st.id})
+        return jsonify({"success": True, "subtopic_name": st.name, "subtopic_id": st.id, "topic_id": topic_id})
 
 
 @bp.route("/get_subtopic", methods=["POST"])
@@ -104,7 +104,8 @@ def get_sub_topic():
     for stp in stps:
         subtopics.append({
             "subtopic_id": stp.id,
-            "subtopic_name": stp.name
+            "subtopic_name": stp.name,
+            "topic_id": stp.topic_id
         })
 
     return jsonify({"success": True, "topic_id": topic_id, "subtopics": subtopics, "topic_name": t.name})
@@ -187,3 +188,79 @@ def add_aphorism():
             "number": r.number,
             "rule": r.rule
         })
+
+
+@bp.route("/edit_topic", methods=["POST"])
+@admin_login_required
+def edit_topic():
+    topic_id = request.form.get("topic_id")
+    topic_name = request.form.get("TopicName")
+
+    if not topic_id or not topic_name:
+        return jsonify({"success": False, "message": "Incomplete Form Data"})
+    
+    topic_name = topic_name.strip()
+    try:
+        topic_id = int(topic_id)
+    except ValueError:
+        return jsonify({"success": False, "message": "Invalid Form Data"})
+    
+    t = Topic.query.filter_by(name=topic_name).first()
+    if t:
+        return jsonify({"success": False, "message": "Already Exists"})
+    
+    t = Topic.query.get(topic_id)
+    if not t:
+        return jsonify({"success": False, "message": "Invalid Request"})
+    
+    t.name = topic_name
+    try:
+        db.session.commit()
+    except:
+        return jsonify({"success": False, "message": "Database Error"})
+    else:
+        return jsonify({"success": True, "topic_name": topic_name})
+
+
+@bp.route("/edit_subtopic", methods=["POST"])
+@admin_login_required
+def edit_subtopic():
+    subtopic_id = request.form.get("subtopic_id")
+    SubTopicName = request.form.get("SubTopicName")
+    topic_id = request.form.get("topic_id")
+
+    if not subtopic_id or not SubTopicName or not topic_id:
+        return jsonify({"success": False, "message": "Incomplete Form Data"})
+    
+    try:
+        subtopic_id = int(subtopic_id)
+        topic_id = int(topic_id)
+    except ValueError:
+        return jsonify({"success": False, "message": "Invalid Form Data"})
+    
+    SubTopicName = SubTopicName.strip()
+
+    st = SubTopic.query.filter_by(topic_id=topic_id).filter_by(name=SubTopicName).first()
+    if st:
+        return jsonify({"success": False, "message": "Already Exists"})
+    
+    st = SubTopic.query.get(subtopic_id)
+    if not st:
+        return jsonify({"success": False, "message": "Invalid Request"})
+    
+    st.name = SubTopicName
+
+    try:
+        db.session.commit()
+    except:
+        return jsonify({"success": False, "message": "Database Error"})
+    else:
+        return jsonify({"success": True})
+    
+
+
+
+
+    
+
+
