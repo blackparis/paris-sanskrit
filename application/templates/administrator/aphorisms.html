@@ -5,8 +5,11 @@
 
 {% block style %}
 <style>
-    .number_span, .rule_span {
-        text-align: left;
+    .edit_link {
+        color: green;
+    }
+    .delete_link {
+        color: red;
     }
 </style>
 {% endblock %}
@@ -32,7 +35,17 @@
             <div id="topics_list">
                 {% if topics %}
                     {% for topic in topics %}
-                        <div><a href="" onclick="SelectTopic('{{topic.id}}'); return false;">{{ topic.name }}</a></div>
+                        <div class="row">
+                            <div class="col-4 col-sm-4">
+                                <a class="content_link" href="" onclick="SelectTopic('{{topic.id}}'); return false;">{{ topic.name }}</a>
+                            </div>
+                            <div class="col-4 col-sm-4">
+                                <a href="" class="edit_link">Edit</a>
+                            </div>
+                            <div class="col-4 col-sm-4">
+                                <a href="" class="delete_link">Delete</a>
+                            </div>
+                        </div>
                     {% endfor %}
                 {% endif %}
             </div>
@@ -54,7 +67,17 @@
 
 <script id="TopicDivHandleBars" type="text/x-handlebars-template">
     {% raw -%}
-        <div><a href="" onclick="SelectTopic('{{topic_id}}'); return false;">{{topic_name}}</a></div>
+        <div class="row">
+            <div class="col-4 col-sm-4">
+                <a class="content_link" href="" onclick="SelectTopic('{{topic_id}}'); return false;">{{topic_name}}</a>
+            </div>
+            <div class="col-4 col-sm-4">
+                <a href="" class="edit_link">Edit</a>
+            </div>
+            <div class="col-4 col-sm-4">
+                <a href="" class="delete_link">Delete</a>
+            </div>
+        </div>
     {%- endraw %}
 </script>
 
@@ -75,7 +98,17 @@
         <hr>
         <div id="subtopics_list">
             {{#each subtopics}}
-                <div><a href="" onclick="SelectSubTopic('{{this.subtopic_id}}'); return false;">{{this.subtopic_name}}</a></div>
+                <div class="row">
+                    <div class="col-4 col-sm-4">
+                        <a class="content_link" href="" onclick="SelectSubTopic('{{this.subtopic_id}}'); return false;">{{this.subtopic_name}}</a>
+                    </div>
+                    <div class="col-4 col-sm-4">
+                        <a href="" class="edit_link">Edit</a>
+                    </div>
+                    <div class="col-4 col-sm-4">
+                        <a href="" class="delete_link">Delete</a>
+                    </div>
+                </div>
             {{/each}}
         </div>
     {%- endraw %}
@@ -83,7 +116,17 @@
 
 <script id="SubTopicHandleBars" type="text/x-handlebars-template">
     {% raw -%}
-        <div><a href="" onclick="SelectSubTopic('{{subtopic_id}}'); return false;">{{subtopic_name}}</a></div>
+        <div class="row">
+            <div class="col-4 col-sm-4">
+                <a class="content_link" href="" onclick="SelectSubTopic('{{subtopic_id}}'); return false;">{{subtopic_name}}</a>
+            </div>
+            <div class="col-4 col-sm-4">
+                <a href="" class="edit_link">Edit</a>
+            </div>
+            <div class="col-4 col-sm-4">
+                <a href="" class="delete_link">Delete</a>
+            </div>
+        </div>
     {%- endraw %}
 </script>
 
@@ -107,12 +150,18 @@
         <hr>
         <div id="rules_list">
             {{#each aphorisms}}
-                <div class="row" id="rule_{{this.id}}">
-                    <div class="col-sm-2 number_span">
+                <div class="row">
+                    <div class="col-1 col-sm-1">
                         <span>{{this.number}}</span>
                     </div>
-                    <div class="col-sm-10 rule_span">
-                        <span>{{this.rule}}</span>
+                    <div class="col-1 col-sm-1">
+                        <a class="edit_link" href="">Edit</a>
+                    </div>
+                    <div class="col-1 col-sm-1">
+                        <a class="delete_link" href="">Delete</a>
+                    </div>
+                    <div class="col-9 col-sm-9">
+                        <span style="font-size: large;">{{this.rule}}</span>
                     </div>
                 </div>
             {{/each}}
@@ -122,12 +171,18 @@
 
 <script id="RulesHandleBars" type="text/x-handlebars-template">
     {% raw -%}
-        <div class="row" id="rule_{{rule_id}}">
-            <div class="col-sm-2 number_span">
+        <div class="row">
+            <div class="col-1 col-sm-1">
                 <span>{{number}}</span>
             </div>
-            <div class="col-sm-10 rule_span">
-                <span>{{rule}}</span>
+            <div class="col-1 col-sm-1">
+                <a class="edit_link" href="">Edit</a>
+            </div>
+            <div class="col-1 col-sm-1">
+                <a class="delete_link" href="">Delete</a>
+            </div>
+            <div class="col-9 col-sm-9">
+                <span style="font-size: large;">{{rule}}</span>
             </div>
         </div>
     {%- endraw %}

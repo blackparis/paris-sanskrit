@@ -79,7 +79,7 @@ def add_subtopic():
     except:
         return jsonify({"success": False, "message": "Unknown Error"})
     else:
-        st = SubTopic.query.filter_by(name=subtopic_name).first()
+        st = SubTopic.query.filter_by(name=subtopic_name).filter_by(topic_id=topic_id).first()
         return jsonify({"success": True, "subtopic_name": st.name, "subtopic_id": st.id})
 
 
