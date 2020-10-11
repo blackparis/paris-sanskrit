@@ -83,6 +83,20 @@ def add_subtopic():
         return jsonify({"success": True, "subtopic_name": st.name, "subtopic_id": st.id, "topic_id": topic_id})
 
 
+@bp.route("/get_topics")
+def get_topics():
+    topics = Topic.query.all()
+    tp = []
+    for t in topics:
+        tp.append({
+            "id": t.id,
+            "name": t.name
+        })
+    
+    return jsonify({"success": True, "topics": tp})
+
+
+
 @bp.route("/get_subtopic", methods=["POST"])
 def get_sub_topic():
     topic_id = request.form.get("topic_id")
@@ -228,6 +242,7 @@ def edit_subtopic():
     subtopic_id = request.form.get("subtopic_id")
     SubTopicName = request.form.get("SubTopicName")
     topic_id = request.form.get("topic_id")
+    new_topic_id = request.form.get("new_topic_id")
 
     if not subtopic_id or not SubTopicName or not topic_id:
         return jsonify({"success": False, "message": "Incomplete Form Data"})
@@ -235,12 +250,16 @@ def edit_subtopic():
     try:
         subtopic_id = int(subtopic_id)
         topic_id = int(topic_id)
+        new_topic_id = int(new_topic_id)
     except ValueError:
         return jsonify({"success": False, "message": "Invalid Form Data"})
     
+    t = Topic.query.get(new_topic_id)
+    if not t:
+        return jsonify({"success": False, "message": "Invalid Request"})
+    
     SubTopicName = SubTopicName.strip()
-
-    st = SubTopic.query.filter_by(topic_id=topic_id).filter_by(name=SubTopicName).first()
+    st = SubTopic.query.filter_by(topic_id=new_topic_id).filter_by(name=SubTopicName).first()
     if st:
         return jsonify({"success": False, "message": "Already Exists"})
     
@@ -248,6 +267,7 @@ def edit_subtopic():
     if not st:
         return jsonify({"success": False, "message": "Invalid Request"})
     
+    st.topic_id = new_topic_id
     st.name = SubTopicName
 
     try:
@@ -256,11 +276,3 @@ def edit_subtopic():
         return jsonify({"success": False, "message": "Database Error"})
     else:
         return jsonify({"success": True})
-    
-
-
-
-
-    
-
-

@@ -264,20 +264,37 @@ function EditTopic(topic_id, topic_name) {
 
 function edit_subtopic(subtopic_id, subtopic_name, topic_id) {
     CloseEditingForms();
-    const EditSubTopicFormTemplate = Handlebars.compile(document.querySelector('#EditSubTopicFormHandleBars').innerHTML);
-    const EditSubTopicForm = EditSubTopicFormTemplate({
-        "subtopic_id": subtopic_id,
-        "subtopic_name": subtopic_name,
-        "topic_id": topic_id
-    });
-    document.querySelector(`#edit_subtopic_form_${subtopic_id}`).innerHTML = EditSubTopicForm;
-    document.querySelector(`#subtopic_name_${subtopic_id}`).focus();
+
+    const request = new XMLHttpRequest();
+    request.open('GET', '/administrator/get_topics');
+
+    request.onload = () => {
+        const res = JSON.parse(request.responseText);
+        if (res.success) {
+            const EditSubTopicFormTemplate = Handlebars.compile(document.querySelector('#EditSubTopicFormHandleBars').innerHTML);
+            const EditSubTopicForm = EditSubTopicFormTemplate({
+                "subtopic_id": subtopic_id,
+                "subtopic_name": subtopic_name,
+                "topic_id": topic_id,
+                "topics": res.topics
+            });
+            document.querySelector(`#edit_subtopic_form_${subtopic_id}`).innerHTML = EditSubTopicForm;
+            document.querySelector(`#subtopic_name_${subtopic_id}`).focus();
+            document.querySelector(`#selectTopics_${topic_id}`).value = topic_id;
+        } else {
+            document.querySelector("#edit_subtopic_error").innerHTML = res.message;
+        }
+    };
+
+    request.send();
+    return false;
 }
 
 
 function EditSubTopic(subtopic_id, subtopic_name, topic_id) {
     let SubTopicName = document.querySelector(`#subtopic_name_${subtopic_id}`).value;
-    if (!SubTopicName || SubTopicName === subtopic_name) {
+    let new_topic_id = document.querySelector(`#selectTopics_${topic_id}`).value;
+    if (!SubTopicName || (SubTopicName === subtopic_name && topic_id === new_topic_id)) {
         CloseEditingForms();
         return false;
     }
@@ -301,6 +318,7 @@ function EditSubTopic(subtopic_id, subtopic_name, topic_id) {
     data.append('subtopic_id', subtopic_id);
     data.append('SubTopicName', SubTopicName);
     data.append('topic_id', topic_id);
+    data.append('new_topic_id', new_topic_id);
     request.send(data);
     return false;
 }

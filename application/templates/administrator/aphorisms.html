@@ -213,6 +213,14 @@
         <hr>
         <form onsubmit="EditSubTopic('{{subtopic_id}}', '{{subtopic_name}}', '{{topic_id}}'); return false;">
             <div class="form-group">
+                <label for="selectTopics_{{topic_id}}">Topic</label>
+                <select class="form-control" id="selectTopics_{{topic_id}}">
+                    {{#each topics}}
+                        <option value="{{this.id}}">{{this.name}}</option>
+                    {{/each}}
+                </select>
+            </div>
+            <div class="form-group">
                 <input type="text" class="form-control form-control-sm" id="subtopic_name_{{subtopic_id}}" value="{{subtopic_name}}">
             </div>
             <button type="submit" class="btn btn-primary btn-sm">Update</button>
