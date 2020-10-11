@@ -159,7 +159,7 @@
                         <span>{{this.number}}</span>
                     </div>
                     <div class="col-1 col-sm-1">
-                        <a class="edit_link" href="">Edit</a>
+                        <a class="edit_link" href="" onclick="edit_rule('{{this.number}}', '{{this.rule}}', '{{this.id}}', '{{this.subtopic_id}}'); return false;">Edit</a>
                     </div>
                     <div class="col-1 col-sm-1">
                         <a class="delete_link" href="">Delete</a>
@@ -168,6 +168,7 @@
                         <span style="font-size: large;">{{this.rule}}</span>
                     </div>
                 </div>
+                <div class="editing" id="edit_rule_form_{{this.id}}"></div>
             {{/each}}
         </div>
     {%- endraw %}
@@ -180,7 +181,7 @@
                 <span>{{number}}</span>
             </div>
             <div class="col-1 col-sm-1">
-                <a class="edit_link" href="">Edit</a>
+                <a class="edit_link" href="" onclick="edit_rule('{{number}}', '{{rule}}', '{{rule_id}}', '{{subtopic_id}}'); return false;">Edit</a>
             </div>
             <div class="col-1 col-sm-1">
                 <a class="delete_link" href="">Delete</a>
@@ -189,6 +190,7 @@
                 <span style="font-size: large;">{{rule}}</span>
             </div>
         </div>
+        <div class="editing" id="edit_rule_form_{{rule_id}}"></div>
     {%- endraw %}
 </script>
 
@@ -227,6 +229,33 @@
         </form>
         <a href="" onclick="CloseEditingForms(); return false;">Cancel</a>
         <div id="edit_subtopic_error" class="errorMessage"></div>
+        <hr>
+    {%- endraw %}
+</script>
+
+
+<script id="EditRuleFormHandleBars" type="text/x-handlebars-template">
+    {% raw -%}
+        <hr>
+        <form onsubmit="EditRule('{{rule_id}}', '{{subtopic_id}}', '{{rule_number}}', '{{rule}}'); return false;">
+            <div class="form-group" style="padding: 3px;">
+                <input type="text" class="form-control form-control-sm" id="aphorism_number_{{rule_id}}" value={{rule_number}}>
+            </div>
+            <div class="form-group">
+                <label for="selectSubTopics_{{rule_id}}">Sub Topic</label>
+                <select class="form-control" id="selectSubTopics_{{rule_id}}">
+                    {{#each subtopics}}
+                        <option value="{{this.id}}">{{this.name}}</option>
+                    {{/each}}
+                </select>
+            </div>
+            <div class="form-group" style="padding: 3px;">
+                <textarea class="form-control" id="aphorism_{{rule_id}}" rows="10">{{rule}}</textarea>
+            </div>
+            <button type="submit" class="btn btn-primary btn-sm">Update</button>
+        </form>
+        <a href="" onclick="CloseEditingForms(); return false;">Cancel</a>
+        <div id="edit_rule_error" class="errorMessage"></div>
         <hr>
     {%- endraw %}
 </script>

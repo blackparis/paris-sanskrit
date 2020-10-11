@@ -192,7 +192,8 @@ function AddRule(subtopic_id) {
             const r = r_div({
                 "rule_id": res.rule_id,
                 "number": res.number,
-                "rule": res.rule
+                "rule": res.rule,
+                "subtopic_id": subtopic_id
             });
             document.querySelector('#rules_list').innerHTML += r;
             cancel_add_rule();
@@ -282,7 +283,7 @@ function edit_subtopic(subtopic_id, subtopic_name, topic_id) {
             document.querySelector(`#subtopic_name_${subtopic_id}`).focus();
             document.querySelector(`#selectTopics_${topic_id}`).value = topic_id;
         } else {
-            document.querySelector("#edit_subtopic_error").innerHTML = res.message;
+            alert(res.message);
         }
     };
 
@@ -319,6 +320,81 @@ function EditSubTopic(subtopic_id, subtopic_name, topic_id) {
     data.append('SubTopicName', SubTopicName);
     data.append('topic_id', topic_id);
     data.append('new_topic_id', new_topic_id);
+    request.send(data);
+    return false;
+}
+
+
+function edit_rule(rule_number, rule, rule_id, subtopic_id) {
+    CloseEditingForms();
+
+    var meta = document.getElementsByTagName("meta")[0];
+    var csrftoken = meta.content;
+    const request = new XMLHttpRequest();
+    request.open('POST', '/administrator/GetSubTopics');
+    request.setRequestHeader("X-CSRFToken", csrftoken);   
+
+    request.onload = () => {
+        const res = JSON.parse(request.responseText);
+        if (res.success) {
+            const EditRuleFormTemplate = Handlebars.compile(document.querySelector('#EditRuleFormHandleBars').innerHTML);
+            const EditRuleForm = EditRuleFormTemplate({
+                "rule_id": rule_id,
+                "subtopics": res.subtopics,
+                "rule_number": rule_number,
+                "rule": rule,
+                "subtopic_id": subtopic_id
+            });
+            document.querySelector(`#edit_rule_form_${rule_id}`).innerHTML = EditRuleForm;
+            document.querySelector(`#aphorism_number_${rule_id}`).focus();
+            document.querySelector(`#selectSubTopics_${rule_id}`).value = subtopic_id;
+        } else {
+            alert(res.message);
+        }
+    };
+
+    const data = new FormData();
+    data.append('subtopic_id', subtopic_id);
+    request.send(data);
+    return false;
+}
+
+
+function EditRule(rule_id, subtopic_id, rule_number, rule) {
+    let new_subtopic_id = document.querySelector(`#selectSubTopics_${rule_id}`).value;
+    let new_rule_number = document.querySelector(`#aphorism_number_${rule_id}`).value;
+    let new_rule = document.querySelector(`#aphorism_${rule_id}`).value;
+
+    if (!new_subtopic_id || !new_rule_number || !new_rule) {
+        CloseEditingForms();
+        return false;
+    }
+
+    if (new_subtopic_id === subtopic_id && new_rule_number === rule_number && new_rule === rule) {
+        CloseEditingForms();
+        return false;
+    }
+
+    var meta = document.getElementsByTagName("meta")[0];
+    var csrftoken = meta.content;
+    const request = new XMLHttpRequest();
+    request.open('POST', '/administrator/edit_rule');
+    request.setRequestHeader("X-CSRFToken", csrftoken);   
+
+    request.onload = () => {
+        const res = JSON.parse(request.responseText);
+        if (res.success) {
+            location.reload();
+        } else {
+            document.querySelector("#edit_rule_error").innerHTML = res.message;
+        }
+    };
+
+    const data = new FormData();
+    data.append('new_subtopic_id', new_subtopic_id);
+    data.append('new_rule_number', new_rule_number);
+    data.append('new_rule', new_rule);
+    data.append('rule_id', rule_id);
     request.send(data);
     return false;
 }

@@ -77,7 +77,7 @@ def add_subtopic():
         db.session.add(st)
         db.session.commit()
     except:
-        return jsonify({"success": False, "message": "Unknown Error"})
+        return jsonify({"success": False, "message": "Database Error"})
     else:
         st = SubTopic.query.filter_by(name=subtopic_name).filter_by(topic_id=topic_id).first()
         return jsonify({"success": True, "subtopic_name": st.name, "subtopic_id": st.id, "topic_id": topic_id})
@@ -93,8 +93,36 @@ def get_topics():
             "name": t.name
         })
     
+    if len(tp) == 0:
+        return jsonify({"success": False, "message": "No Topics"})
+    
     return jsonify({"success": True, "topics": tp})
 
+
+@bp.route("/GetSubTopics", methods=["POST"])
+def GetSubTopics():
+    subtopic_id = request.form.get("subtopic_id")
+    if not subtopic_id:
+        return jsonify({"success": False, "message": "Incomplete Form Data"})
+    
+    try:
+        subtopic_id = int(subtopic_id)
+    except ValueError:
+        return jsonify({"success": False, "message": "Invalid Form Data"})
+    
+    st = SubTopic.query.get(subtopic_id)
+    if not st:
+        return jsonify({"success": False, "message": "Invalid Request"})
+    
+    subtopics = SubTopic.query.filter_by(topic_id=st.topic_id).all()
+    response = []
+    for s in subtopics:
+        response.append({
+            "id": s.id,
+            "name": s.name
+        })
+    
+    return jsonify({"success": True, "subtopics": response})
 
 
 @bp.route("/get_subtopic", methods=["POST"])
@@ -146,7 +174,8 @@ def get_rules():
         aphorisms.append({
             "id": rule.id,
             "number": rule.number,
-            "rule": rule.rule
+            "rule": rule.rule,
+            "subtopic_id": rule.subtopic_id
         })
 
     return jsonify({"success": True, "topic_name": st.topic.name, "subtopic_name": st.name, "aphorisms": aphorisms, "subtopic_id": subtopic_id})
@@ -269,6 +298,54 @@ def edit_subtopic():
     
     st.topic_id = new_topic_id
     st.name = SubTopicName
+
+    try:
+        db.session.commit()
+    except:
+        return jsonify({"success": False, "message": "Database Error"})
+    else:
+        return jsonify({"success": True})
+
+
+@bp.route("/edit_rule", methods=["POST"])
+@admin_login_required
+def edit_rule():
+    new_subtopic_id = request.form.get("new_subtopic_id")
+    new_rule_number = request.form.get("new_rule_number")
+    new_rule = request.form.get("new_rule")
+    rule_id = request.form.get("rule_id")
+
+    if not new_subtopic_id or not new_rule_number or not new_rule or not rule_id:
+        return jsonify({"success": False, "message": "Incomplete Form Data"})
+    
+    new_rule = new_rule.strip()
+    try:
+        new_subtopic_id = int(new_subtopic_id)
+        new_rule_number = int(new_rule_number)
+        rule_id = int(rule_id)
+    except ValueError:
+        return jsonify({"success": False, "message": "Invalid Form Data"})
+    
+    st = SubTopic.query.get(new_subtopic_id)
+    if not st:
+        return jsonify({"success": False, "message": "Invalid Request"})
+    
+    rule = Aphorism.query.get(rule_id)
+    if not rule:
+        return jsonify({"success": False, "message": "Invalid Request"})
+    
+    if rule.number != new_rule_number:
+        r = Aphorism.query.filter_by(number=new_rule_number).first()
+        if r:
+            return jsonify({"success": False, "message": "Rule Number Already Exists"})
+    else:
+        r = Aphorism.query.filter_by(subtopic_id=new_subtopic_id).filter_by(rule=new_rule).first()
+        if r:
+            return jsonify({"success": False, "message": "Rule Already Exists"})
+    
+    rule.number = new_rule_number
+    rule.subtopic_id = new_subtopic_id
+    rule.rule = new_rule
 
     try:
         db.session.commit()
